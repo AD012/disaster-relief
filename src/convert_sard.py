@@ -1,7 +1,7 @@
 """Convert the Roboflow SARD export (YOLO format) to one COCO JSON per split.
 
 Usage:
-    python src/convert_sard.py --root data/raw/sard-roboflow-tiles --out data/manifests/sard
+    python src/convert_sard.py --root data/raw/sard-roboflow-tiles --out data/manifests/sard/roboflow
 
 file_name in the output is relative to --root, so manifests stay valid wherever
 the raw data lives. Each image also records its source_frame (e.g. "gss1008"),
@@ -51,7 +51,7 @@ def convert_split(root, folder, names):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, default=Path("data/raw/sard-roboflow-tiles"))
-    ap.add_argument("--out", type=Path, default=Path("data/manifests/sard"))
+    ap.add_argument("--out", type=Path, default=Path("data/manifests/sard/roboflow"))
     args = ap.parse_args()
 
     names = yaml.safe_load((args.root / "data.yaml").read_text())["names"]
