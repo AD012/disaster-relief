@@ -1,0 +1,14 @@
+transformers
+peft
+accelerate
+pycocotools
+torchmetrics
+opencv-python
+albumentations
+supervision
+tensorboard
+pyyaml
+scikit-learn
+z3-solver
+pillow
+numpy
