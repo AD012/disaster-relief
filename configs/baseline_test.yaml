@@ -1,0 +1,17 @@
+# Zero-shot Grounding DINO baseline on SARD tiles.
+# baseline.py caches raw detections per (prompt, scale); evaluate.py scores the cache.
+run_name: baseline-test
+seed: 0
+
+model: IDEA-Research/grounding-dino-tiny
+data_root: data/raw/sard-roboflow-tiles
+manifests: data/manifests/sard
+split: test         # single frozen run: settings chosen on val (baseline-val-full)
+subset: null        # number of tiles sampled from the split; null = all
+
+prompts: ["person."]
+scales: [1.0]
+
+cache_threshold: 0.05   # keep almost everything; sweeps happen offline
+text_threshold: 0.05
+sweep_thresholds: [0.3]   # frozen on val; no threshold selection on test
