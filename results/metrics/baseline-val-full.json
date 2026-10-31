@@ -1,0 +1,254 @@
+{
+ "split": "val",
+ "n_images": 553,
+ "variants": {
+  "person_s1.5": {
+   "AP50:95": 0.4655,
+   "AP50": 0.8525,
+   "AP75": 0.4621,
+   "AP_small": 0.2963,
+   "AP_medium": 0.4994,
+   "AP_large": 0.6206,
+   "AR1": 0.3006,
+   "AR10": 0.577,
+   "AR100": 0.5879,
+   "AR_small": 0.3994,
+   "AR_medium": 0.6253,
+   "AR_large": 0.714,
+   "best_f1": {
+    "threshold": 0.35,
+    "precision": 0.9101,
+    "recall": 0.7651,
+    "f1": 0.8313,
+    "tp": 658,
+    "fp": 65,
+    "fn": 202
+   },
+   "sweep": [
+    {
+     "threshold": 0.05,
+     "precision": 0.0998,
+     "recall": 0.936,
+     "f1": 0.1804,
+     "tp": 805,
+     "fp": 7258,
+     "fn": 55
+    },
+    {
+     "threshold": 0.1,
+     "precision": 0.2913,
+     "recall": 0.9081,
+     "f1": 0.4411,
+     "tp": 781,
+     "fp": 1900,
+     "fn": 79
+    },
+    {
+     "threshold": 0.15,
+     "precision": 0.4738,
+     "recall": 0.8826,
+     "f1": 0.6166,
+     "tp": 759,
+     "fp": 843,
+     "fn": 101
+    },
+    {
+     "threshold": 0.2,
+     "precision": 0.6237,
+     "recall": 0.8558,
+     "f1": 0.7216,
+     "tp": 736,
+     "fp": 444,
+     "fn": 124
+    },
+    {
+     "threshold": 0.25,
+     "precision": 0.7597,
+     "recall": 0.8233,
+     "f1": 0.7902,
+     "tp": 708,
+     "fp": 224,
+     "fn": 152
+    },
+    {
+     "threshold": 0.3,
+     "precision": 0.8434,
+     "recall": 0.7953,
+     "f1": 0.8187,
+     "tp": 684,
+     "fp": 127,
+     "fn": 176
+    },
+    {
+     "threshold": 0.35,
+     "precision": 0.9101,
+     "recall": 0.7651,
+     "f1": 0.8313,
+     "tp": 658,
+     "fp": 65,
+     "fn": 202
+    },
+    {
+     "threshold": 0.4,
+     "precision": 0.9541,
+     "recall": 0.7244,
+     "f1": 0.8235,
+     "tp": 623,
+     "fp": 30,
+     "fn": 237
+    },
+    {
+     "threshold": 0.45,
+     "precision": 0.9676,
+     "recall": 0.6605,
+     "f1": 0.7851,
+     "tp": 568,
+     "fp": 19,
+     "fn": 292
+    },
+    {
+     "threshold": 0.5,
+     "precision": 0.9793,
+     "recall": 0.6058,
+     "f1": 0.7486,
+     "tp": 521,
+     "fp": 11,
+     "fn": 339
+    },
+    {
+     "threshold": 0.6,
+     "precision": 0.9807,
+     "recall": 0.4721,
+     "f1": 0.6374,
+     "tp": 406,
+     "fp": 8,
+     "fn": 454
+    }
+   ]
+  },
+  "person_s1": {
+   "AP50:95": 0.4695,
+   "AP50": 0.8567,
+   "AP75": 0.4812,
+   "AP_small": 0.283,
+   "AP_medium": 0.4952,
+   "AP_large": 0.6673,
+   "AR1": 0.3029,
+   "AR10": 0.5836,
+   "AR100": 0.5964,
+   "AR_small": 0.4137,
+   "AR_medium": 0.6288,
+   "AR_large": 0.7465,
+   "best_f1": {
+    "threshold": 0.3,
+    "precision": 0.8602,
+    "recall": 0.8012,
+    "f1": 0.8296,
+    "tp": 689,
+    "fp": 112,
+    "fn": 171
+   },
+   "sweep": [
+    {
+     "threshold": 0.05,
+     "precision": 0.0766,
+     "recall": 0.9477,
+     "f1": 0.1418,
+     "tp": 815,
+     "fp": 9819,
+     "fn": 45
+    },
+    {
+     "threshold": 0.1,
+     "precision": 0.2508,
+     "recall": 0.9116,
+     "f1": 0.3934,
+     "tp": 784,
+     "fp": 2342,
+     "fn": 76
+    },
+    {
+     "threshold": 0.15,
+     "precision": 0.4421,
+     "recall": 0.8872,
+     "f1": 0.5901,
+     "tp": 763,
+     "fp": 963,
+     "fn": 97
+    },
+    {
+     "threshold": 0.2,
+     "precision": 0.6285,
+     "recall": 0.8616,
+     "f1": 0.7268,
+     "tp": 741,
+     "fp": 438,
+     "fn": 119
+    },
+    {
+     "threshold": 0.25,
+     "precision": 0.7511,
+     "recall": 0.8314,
+     "f1": 0.7892,
+     "tp": 715,
+     "fp": 237,
+     "fn": 145
+    },
+    {
+     "threshold": 0.3,
+     "precision": 0.8602,
+     "recall": 0.8012,
+     "f1": 0.8296,
+     "tp": 689,
+     "fp": 112,
+     "fn": 171
+    },
+    {
+     "threshold": 0.35,
+     "precision": 0.9156,
+     "recall": 0.757,
+     "f1": 0.8288,
+     "tp": 651,
+     "fp": 60,
+     "fn": 209
+    },
+    {
+     "threshold": 0.4,
+     "precision": 0.959,
+     "recall": 0.707,
+     "f1": 0.8139,
+     "tp": 608,
+     "fp": 26,
+     "fn": 252
+    },
+    {
+     "threshold": 0.45,
+     "precision": 0.979,
+     "recall": 0.6512,
+     "f1": 0.7821,
+     "tp": 560,
+     "fp": 12,
+     "fn": 300
+    },
+    {
+     "threshold": 0.5,
+     "precision": 0.9843,
+     "recall": 0.5849,
+     "f1": 0.7338,
+     "tp": 503,
+     "fp": 8,
+     "fn": 357
+    },
+    {
+     "threshold": 0.6,
+     "precision": 0.9856,
+     "recall": 0.4791,
+     "f1": 0.6448,
+     "tp": 412,
+     "fp": 6,
+     "fn": 448
+    }
+   ]
+  }
+ }
+}
