@@ -1,0 +1,17 @@
+# Zero-shot Grounding DINO on visdrone tiles with the settings frozen on SARD val.
+# baseline.py caches raw detections per (prompt, scale); evaluate.py scores the cache.
+run_name: zeroshot-visdrone-tiles300
+seed: 0
+
+model: IDEA-Research/grounding-dino-tiny
+data_root: data/processed/visdrone
+manifests: data/manifests/visdrone
+split: tiles300    # from make_tiles.py
+subset: null        # number of tiles sampled from the split; null = all
+
+prompts: ["person."]
+scales: [1.0]
+
+cache_threshold: 0.05   # keep almost everything; sweeps happen offline
+text_threshold: 0.05
+sweep_thresholds: [0.3]   # frozen on SARD val
