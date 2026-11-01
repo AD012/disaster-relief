@@ -1,0 +1,40 @@
+{
+ "split": "tiles300",
+ "n_images": 300,
+ "variants": {
+  "person_s1": {
+   "AP50:95": 0.2366,
+   "AP50": 0.5418,
+   "AP75": 0.1762,
+   "AP_small": 0.2098,
+   "AP_medium": 0.503,
+   "AP_large": 0.8629,
+   "AR1": 0.0414,
+   "AR10": 0.2229,
+   "AR100": 0.4052,
+   "AR_small": 0.3831,
+   "AR_medium": 0.6452,
+   "AR_large": 0.9,
+   "best_f1": {
+    "threshold": 0.3,
+    "precision": 0.712,
+    "recall": 0.4337,
+    "f1": 0.539,
+    "tp": 1429,
+    "fp": 578,
+    "fn": 1866
+   },
+   "sweep": [
+    {
+     "threshold": 0.3,
+     "precision": 0.712,
+     "recall": 0.4337,
+     "f1": 0.539,
+     "tp": 1429,
+     "fp": 578,
+     "fn": 1866
+    }
+   ]
+  }
+ }
+}

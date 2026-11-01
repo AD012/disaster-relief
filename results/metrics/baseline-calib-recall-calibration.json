@@ -1,0 +1,54 @@
+{
+ "calib_people": 748,
+ "variant": "person_s1",
+ "rows": [
+  {
+   "target": 0.7,
+   "threshold": 0.3854,
+   "val": {
+    "recall": 0.7221,
+    "precision": 0.9423
+   },
+   "test": {
+    "recall": 0.609,
+    "precision": 0.8707
+   }
+  },
+  {
+   "target": 0.8,
+   "threshold": 0.2849,
+   "val": {
+    "recall": 0.8105,
+    "precision": 0.8219
+   },
+   "test": {
+    "recall": 0.7237,
+    "precision": 0.6924
+   }
+  },
+  {
+   "target": 0.9,
+   "threshold": 0.1576,
+   "val": {
+    "recall": 0.8849,
+    "precision": 0.473
+   },
+   "test": {
+    "recall": 0.8352,
+    "precision": 0.3664
+   }
+  },
+  {
+   "target": 0.95,
+   "threshold": 0.0599,
+   "val": {
+    "recall": 0.936,
+    "precision": 0.1065
+   },
+   "test": {
+    "recall": 0.9015,
+    "precision": 0.0778
+   }
+  }
+ ]
+}

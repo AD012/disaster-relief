@@ -1,0 +1,130 @@
+{
+ "split": "calib",
+ "n_images": 586,
+ "variants": {
+  "person_s1": {
+   "AP50:95": 0.4598,
+   "AP50": 0.8556,
+   "AP75": 0.432,
+   "AP_small": 0.1831,
+   "AP_medium": 0.4797,
+   "AP_large": 0.701,
+   "AR1": 0.3628,
+   "AR10": 0.5762,
+   "AR100": 0.5947,
+   "AR_small": 0.3885,
+   "AR_medium": 0.6145,
+   "AR_large": 0.759,
+   "best_f1": {
+    "threshold": 0.3,
+    "precision": 0.8464,
+    "recall": 0.7807,
+    "f1": 0.8122,
+    "tp": 584,
+    "fp": 106,
+    "fn": 164
+   },
+   "sweep": [
+    {
+     "threshold": 0.05,
+     "precision": 0.0633,
+     "recall": 0.9586,
+     "f1": 0.1188,
+     "tp": 717,
+     "fp": 10606,
+     "fn": 31
+    },
+    {
+     "threshold": 0.1,
+     "precision": 0.2155,
+     "recall": 0.9278,
+     "f1": 0.3497,
+     "tp": 694,
+     "fp": 2527,
+     "fn": 54
+    },
+    {
+     "threshold": 0.15,
+     "precision": 0.3935,
+     "recall": 0.9091,
+     "f1": 0.5493,
+     "tp": 680,
+     "fp": 1048,
+     "fn": 68
+    },
+    {
+     "threshold": 0.2,
+     "precision": 0.5666,
+     "recall": 0.8757,
+     "f1": 0.688,
+     "tp": 655,
+     "fp": 501,
+     "fn": 93
+    },
+    {
+     "threshold": 0.25,
+     "precision": 0.7239,
+     "recall": 0.8342,
+     "f1": 0.7752,
+     "tp": 624,
+     "fp": 238,
+     "fn": 124
+    },
+    {
+     "threshold": 0.3,
+     "precision": 0.8464,
+     "recall": 0.7807,
+     "f1": 0.8122,
+     "tp": 584,
+     "fp": 106,
+     "fn": 164
+    },
+    {
+     "threshold": 0.35,
+     "precision": 0.9098,
+     "recall": 0.7286,
+     "f1": 0.8092,
+     "tp": 545,
+     "fp": 54,
+     "fn": 203
+    },
+    {
+     "threshold": 0.4,
+     "precision": 0.9462,
+     "recall": 0.6818,
+     "f1": 0.7925,
+     "tp": 510,
+     "fp": 29,
+     "fn": 238
+    },
+    {
+     "threshold": 0.45,
+     "precision": 0.9691,
+     "recall": 0.6297,
+     "f1": 0.7634,
+     "tp": 471,
+     "fp": 15,
+     "fn": 277
+    },
+    {
+     "threshold": 0.5,
+     "precision": 0.9819,
+     "recall": 0.5816,
+     "f1": 0.7305,
+     "tp": 435,
+     "fp": 8,
+     "fn": 313
+    },
+    {
+     "threshold": 0.6,
+     "precision": 0.988,
+     "recall": 0.4385,
+     "f1": 0.6074,
+     "tp": 328,
+     "fp": 4,
+     "fn": 420
+    }
+   ]
+  }
+ }
+}
