@@ -124,7 +124,45 @@
      "fp": 2,
      "fn": 291
     }
-   ]
+   ],
+   "by_criterion": {
+    "iou50": {
+     "AP": 0.7956,
+     "at_best_thr": {
+      "threshold": 0.45,
+      "precision": 0.8623,
+      "recall": 0.6386,
+      "f1": 0.7338,
+      "tp": 288,
+      "fp": 46,
+      "fn": 163
+     }
+    },
+    "iou30": {
+     "AP": 0.822,
+     "at_best_thr": {
+      "threshold": 0.45,
+      "precision": 0.8743,
+      "recall": 0.6475,
+      "f1": 0.7439,
+      "tp": 292,
+      "fp": 42,
+      "fn": 159
+     }
+    },
+    "centre": {
+     "AP": 0.8237,
+     "at_best_thr": {
+      "threshold": 0.45,
+      "precision": 0.8743,
+      "recall": 0.6475,
+      "f1": 0.7439,
+      "tp": 292,
+      "fp": 42,
+      "fn": 159
+     }
+    }
+   }
   },
   "person-human_s1": {
    "AP50:95": 0.4504,
@@ -248,7 +286,45 @@
      "fp": 1,
      "fn": 278
     }
-   ]
+   ],
+   "by_criterion": {
+    "iou50": {
+     "AP": 0.7777,
+     "at_best_thr": {
+      "threshold": 0.5,
+      "precision": 0.9802,
+      "recall": 0.5499,
+      "f1": 0.7045,
+      "tp": 248,
+      "fp": 5,
+      "fn": 203
+     }
+    },
+    "iou30": {
+     "AP": 0.804,
+     "at_best_thr": {
+      "threshold": 0.5,
+      "precision": 0.9921,
+      "recall": 0.5565,
+      "f1": 0.7131,
+      "tp": 251,
+      "fp": 2,
+      "fn": 200
+     }
+    },
+    "centre": {
+     "AP": 0.8043,
+     "at_best_thr": {
+      "threshold": 0.5,
+      "precision": 0.9921,
+      "recall": 0.5565,
+      "f1": 0.7131,
+      "tp": 251,
+      "fp": 2,
+      "fn": 200
+     }
+    }
+   }
   },
   "person_s1.5": {
    "AP50:95": 0.4916,
@@ -372,7 +448,45 @@
      "fp": 5,
      "fn": 234
     }
-   ]
+   ],
+   "by_criterion": {
+    "iou50": {
+     "AP": 0.8827,
+     "at_best_thr": {
+      "threshold": 0.35,
+      "precision": 0.9084,
+      "recall": 0.8137,
+      "f1": 0.8585,
+      "tp": 367,
+      "fp": 37,
+      "fn": 84
+     }
+    },
+    "iou30": {
+     "AP": 0.9194,
+     "at_best_thr": {
+      "threshold": 0.35,
+      "precision": 0.9406,
+      "recall": 0.8426,
+      "f1": 0.8889,
+      "tp": 380,
+      "fp": 24,
+      "fn": 71
+     }
+    },
+    "centre": {
+     "AP": 0.9218,
+     "at_best_thr": {
+      "threshold": 0.35,
+      "precision": 0.9381,
+      "recall": 0.8404,
+      "f1": 0.8865,
+      "tp": 379,
+      "fp": 25,
+      "fn": 72
+     }
+    }
+   }
   },
   "person_s1": {
    "AP50:95": 0.4947,
@@ -496,7 +610,45 @@
      "fp": 4,
      "fn": 223
     }
-   ]
+   ],
+   "by_criterion": {
+    "iou50": {
+     "AP": 0.8835,
+     "at_best_thr": {
+      "threshold": 0.35,
+      "precision": 0.9079,
+      "recall": 0.7871,
+      "f1": 0.8432,
+      "tp": 355,
+      "fp": 36,
+      "fn": 96
+     }
+    },
+    "iou30": {
+     "AP": 0.9156,
+     "at_best_thr": {
+      "threshold": 0.35,
+      "precision": 0.9361,
+      "recall": 0.8115,
+      "f1": 0.8694,
+      "tp": 366,
+      "fp": 25,
+      "fn": 85
+     }
+    },
+    "centre": {
+     "AP": 0.9166,
+     "at_best_thr": {
+      "threshold": 0.35,
+      "precision": 0.9361,
+      "recall": 0.8115,
+      "f1": 0.8694,
+      "tp": 366,
+      "fp": 25,
+      "fn": 85
+     }
+    }
+   }
   }
  }
 }
