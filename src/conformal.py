@@ -378,9 +378,9 @@ def write_doc(result, out):
             lines.append(f"| {row['target']:.2f} | " + " | ".join(cells) + " |")
         lines.append("")
     lines += ["## False boxes at the 0.90 target, by type", "",
-              "One-to-one matching at IoU ≥ 0.3. Each false box is classified by its best IoU with any person: "
-              "duplicate ≥ 0.3 (that person was already matched), loose 0.1–0.3, background < 0.1.", "",
-              "| Method | Split | λ | Loose box on a person | Duplicate | Background | Total | Per tile |", "|---|---|---|---|---|---|---|---|"]
+              "Matching rule: one-to-one at IoU ≥ 0.3 (the Phase 2 breakdown used IoU ≥ 0.5, so its \"loose\" category (0.1–0.5) is not comparable). "
+              "Each false box is classified by its best IoU with any person: duplicate ≥ 0.3 (that person was already matched), loose 0.1–0.3, background < 0.1.", "",
+              "| Method | Split | Matching rule | λ | Loose box on a person | Duplicate | Background | Total | Per tile |", "|---|---|---|---|---|---|---|---|---|"]
     for row in result["targets"]:
         if row["target"] != 0.90:
             continue
@@ -389,9 +389,9 @@ def write_doc(result, out):
             for name in ("val", "test"):
                 fb = r.get("fp_breakdown", {}).get(name)
                 if fb is None:
-                    lines.append(f"| `{method}` | {name} | {'unreachable' if r['lambda'] is None else 'needs lower-floor run'} | | | | | |")
+                    lines.append(f"| `{method}` | {name} | IoU ≥ 0.3 | {'unreachable' if r['lambda'] is None else 'needs lower-floor run'} | | | | | |")
                     continue
-                lines.append(f"| `{method}` | {name} | {r['lambda']:.3f} | {fb['loose']} | {fb['duplicate']} | {fb['background']} | "
+                lines.append(f"| `{method}` | {name} | IoU ≥ 0.3 | {r['lambda']:.3f} | {fb['loose']} | {fb['duplicate']} | {fb['background']} | "
                              f"{fb['total']} | {fb['total'] / fb['tiles']:.3f} |")
     lines += ["", f"## Box guarantee (target coverage {BOX_COVERAGE:.2f}, method `crc-frame`)", "",
               "| Target | Margin m | Calib pairs | Val coverage | Test coverage | Matched box area × (test) | Test extra false boxes/tile |",
