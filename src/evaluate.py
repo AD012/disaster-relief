@@ -35,17 +35,8 @@ def iou(a, b):
 CRITERIA = ["iou50", "iou30", "centre"]  # centre: detection centre inside the label box
 
 
-def match_image(ds, gts, criterion="iou50"):
-    """Greedy matching of score-sorted detections ds to gts.
-
-    Each detection takes the unmatched (or ignore) label it overlaps most among
-    those that satisfy the criterion. Returns one label per detection:
-    "tp", "fp" or "ignored" (matched an ignore region), plus a per-gt hit list.
-    """
-    taken = [False] * len(gts)
-    if not ds or not gts:
-        return ["fp"] * len(ds), taken
-    d_xywh, g_xywh = np.array([d["bbox"] for d in ds]), np.array([g["bbox"] for g in gts])
+def qualifies(d_xywh, g_xywh, criterion):
+    """(ious, ok) for detections (N,4) vs labels (M,4); ok[i, j] if detection i may match label j."""
     ious = iou(d_xywh, g_xywh)
     if criterion == "centre":
         cx, cy = d_xywh[:, 0] + d_xywh[:, 2] / 2, d_xywh[:, 1] + d_xywh[:, 3] / 2
@@ -53,16 +44,39 @@ def match_image(ds, gts, criterion="iou50"):
               & (cy[:, None] >= g_xywh[:, 1]) & (cy[:, None] <= g_xywh[:, 1] + g_xywh[:, 3]))
     else:
         ok = ious >= {"iou50": 0.5, "iou30": 0.3}[criterion]
-    labels = []
+    return ious, ok
+
+
+def match_pairs(ds, gts, criterion="iou50"):
+    """Like match_image, but also returns the matched label index per detection (None if unmatched)."""
+    taken = [False] * len(gts)
+    if not ds or not gts:
+        return ["fp"] * len(ds), taken, [None] * len(ds)
+    ious, ok = qualifies(np.array([d["bbox"] for d in ds]), np.array([g["bbox"] for g in gts]), criterion)
+    labels, assign = [], []
     for i in range(len(ds)):
         cand = [j for j in np.argsort(-ious[i]) if ok[i, j] and (gts[j]["iscrowd"] or not taken[j])]
         if not cand:
             labels.append("fp")
+            assign.append(None)
         elif gts[cand[0]]["iscrowd"]:
             labels.append("ignored")
+            assign.append(cand[0])
         else:
             taken[cand[0]] = True
             labels.append("tp")
+            assign.append(cand[0])
+    return labels, taken, assign
+
+
+def match_image(ds, gts, criterion="iou50"):
+    """Greedy matching of score-sorted detections ds to gts.
+
+    Each detection takes the unmatched (or ignore) label it overlaps most among
+    those that satisfy the criterion. Returns one label per detection:
+    "tp", "fp" or "ignored" (matched an ignore region), plus a per-gt hit list.
+    """
+    labels, taken, _ = match_pairs(ds, gts, criterion)
     return labels, taken
 
 
