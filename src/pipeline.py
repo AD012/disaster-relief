@@ -118,8 +118,31 @@ def strip(tiles, font, caption):
     return out
 
 
-def block_metrics(records):
-    """Per-block frame-averaged and pooled recall, false boxes per tile (labels required)."""
+SPLITS = ["train", "val", "calib", "test"]
+HELD_OUT = {"val", "calib", "test"}
+
+
+def block_splits(manifest, blocks):
+    """Which split manifest(s) hold each block's frames, read from data/manifests/<dataset>/{train,val,calib,test}.json."""
+    frame_split = {}
+    for s in SPLITS:
+        path = Path(manifest).parent / f"{s}.json"
+        if path.exists():
+            for im in json.loads(path.read_text())["images"]:
+                frame_split[int(im["source_frame"][3:])] = s
+    out = {}
+    for blk in blocks:
+        lo, hi = map(int, blk.split("-"))
+        out[blk] = sorted({s for n, s in frame_split.items() if lo <= n <= hi})
+    return out
+
+
+def block_metrics(records, splits=None):
+    """Per-block frame-averaged and pooled recall, false boxes per tile (labels required).
+
+    Target comparisons are top-level only for held-out blocks (val, calib, test);
+    otherwise they sit under "descriptive_only" with held_out: false.
+    """
     per = defaultdict(lambda: {"frame_fracs": [], "found": 0, "people": 0, "fp": 0, "tiles": 0, "frames": 0})
     for r in records:
         if r["found"] is None:
@@ -135,11 +158,30 @@ def block_metrics(records):
     out = {}
     for blk, b in per.items():
         fr = float(np.mean(b["frame_fracs"])) if b["frame_fracs"] else None
-        out[blk] = {"frames": b["frames"], "people": b["people"], "frame_recall": round(fr, 4) if fr is not None else None,
-                    "recall": round(b["found"] / b["people"], 4) if b["people"] else None,
-                    "fp_per_tile": round(b["fp"] / b["tiles"], 4),
-                    "meets_0.80": fr is not None and fr >= 0.80, "meets_0.90": fr is not None and fr >= 0.90}
+        sp = (splits or {}).get(blk, [])
+        held_out = bool(sp) and set(sp) <= HELD_OUT
+        meets = {"meets_0.80": fr is not None and fr >= 0.80, "meets_0.90": fr is not None and fr >= 0.90}
+        row = {"split": sp[0] if len(sp) == 1 else sp, "held_out": held_out, "frames": b["frames"], "people": b["people"],
+               "frame_recall": round(fr, 4) if fr is not None else None,
+               "recall": round(b["found"] / b["people"], 4) if b["people"] else None,
+               "fp_per_tile": round(b["fp"] / b["tiles"], 4)}
+        row.update(meets if held_out else {"descriptive_only": meets})
+        if "test" in sp:
+            row["note"] = "test block: repeat look at test with a frozen operating point (nothing tuned)"
+        out[blk] = row
     return out
+
+
+def summary_table(per_block):
+    lines = ["| Block | Split | Frames | People | Frame recall | Pooled recall | vs 0.80 | vs 0.90 | False boxes/tile |",
+             "|---|---|---|---|---|---|---|---|---|"]
+    for blk, r in per_block.items():
+        m = r if r["held_out"] else r["descriptive_only"]
+        tag = "" if r["held_out"] else " (descriptive only)"
+        yn = lambda k: ("meets" if m[k] else "misses") + tag
+        lines.append(f"| {blk} | {r['split']} | {r['frames']} | {r['people']} | {r['frame_recall']:.3f} ({r['frames']} frames) | "
+                     f"{r['recall']:.3f} | {yn('meets_0.80')} | {yn('meets_0.90')} | {r['fp_per_tile']:.3f} |")
+    return "\n".join(lines)
 
 
 def consistency(cache_path, records, op, floor):
@@ -216,15 +258,19 @@ def main():
     summary = {"operating_point": op, "git": json.loads((run_dir / "run.json").read_text())["git"],
                "adapter": det.adapter_info, "frames": len(records), "tiles": n_tiles,
                "detections_kept": sum(len(t["detections"]) for r in records for t in r["tiles"]),
-               "flagged_frames": sum(r["flagged"] for r in records),
                "seconds_per_tile_detector": round(det_seconds / n_tiles, 3),
                "seconds_per_tile_total": round((time.perf_counter() - t_start) / n_tiles, 3),
-               "per_block": block_metrics(records), "near_duplicate_skipping": "not implemented (optional; skipped)"}
+               "near_duplicate_skipping": "not implemented (optional; skipped)"}
+    splits = block_splits(cfg["input"]["manifest"], cfg["input"]["blocks"]) if not cfg["input"].get("folder") else None
+    summary["per_block"] = block_metrics(records, splits)
     if cfg.get("consistency_cache"):
         summary["consistency"] = consistency(cfg["consistency_cache"], records, op, d["floor"])
+    summary["flagged_frames"] = {"count": sum(r["flagged"] for r in records), "of_frames": len(records),
+                                 "note": "uninformative on SARD: every SARD frame contains people, so every frame should be flagged"}
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=1))
-    print(json.dumps({k: v for k, v in summary.items() if k not in ("per_block",)}, indent=1))
-    print(json.dumps(summary["per_block"], indent=1))
+    print(json.dumps({k: v for k, v in summary.items() if k not in ("per_block", "flagged_frames")}, indent=1))
+    if summary["per_block"]:
+        print(summary_table(summary["per_block"]))
 
 
 if __name__ == "__main__":

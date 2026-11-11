@@ -120,3 +120,17 @@ Decisions and their reasons, newest last. Results tables live in `docs/results-*
   481–520 is shown as it is: tiny people in deep forest shadow (example `gss507`, 3 of 7 found).
 - **Consistency:** kept detections match the Phase 3 cache on 222 of 222 tiles. Raw box counts differed on 5 tiles. Cause: a bug in the check, not the pipeline. The check re-filtered the cache with `> 0.05`, but the cache rounds scores to 4 decimals, so a score just above 0.05 is stored as 0.0500 and was dropped. Against the full cache all 5 match. The filter is removed in `pipeline.py`. `summary.json` from this run still shows `tiles_with_raw_count_mismatch: 5`, explained here.
 - **Sizes:** the annotated images (11 MB) are not committed. `summary.json`, `run.json`, `config.yaml` and `frames/` (360 KB) are committed with `-f`.
+
+## 2026-11-10: PoC review follow-ups
+
+- **Split labels in `summary.json`:** read from the split manifests (`block_splits` in `pipeline.py`), not typed in.
+  - All three replayed blocks are **test**, including the easy block 281–320.
+  - Each test block carries the note "repeat look at test with a frozen operating point (nothing tuned)".
+  - Blocks outside val, calib and test would get `held_out: false`, with their target comparisons only under `descriptive_only`.
+- **Frame counts** appear next to every per-block number: 35, 30 and 25 frames, fewer than 40 because of the split buffers.
+- **`flagged_frames`** is removed from the headline output. It stays in the JSON, marked uninformative on SARD, because every SARD frame contains people.
+- **Example sheet captions** state how each frame was selected: best frame of the easy block (best case); most false boxes in 1321–1360 (worst case by rule); most missed people in 481–520 (worst case by rule, shown as is); best frame of 481–520 (best case).
+  - The gss1337 observation is passed with `--note` and marked unconfirmed.
+  - Command: `python src/poc_examples.py --note "gss1337=two red boxes sit on dark shapes next to a found person - possibly an unlabelled person (unconfirmed)"`.
+- **Shadow-block misses (481–520):** recovering these people would need a much lower threshold and far more false boxes everywhere (worst-block at 0.90 needs λ = 0.031, which is unusable). This replaces a "can't recover" sentence that appeared only in the checkpoint message, not in this log.
+- **Adapters:** LoRA adapter loading is untested until real weights exist; only head state dicts are tested.
