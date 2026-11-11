@@ -104,3 +104,19 @@ Decisions and their reasons, newest last. Results tables live in `docs/results-*
 - **Consistency test:** kept detections must equal the Phase 3 test cache after the same NMS and threshold (scores within 1e-4, boxes within 0.02 px). It passed on an 11-tile development run.
 - **Near-duplicate frame skipping:** not implemented (optional). Recorded in `summary.json`.
 - **Split buffers:** frames at block edges were dropped from the splits, so a "40-frame block" replays fewer frames.
+
+## 2026-11-10: PoC replay (`results/poc-replay`, commit `fb95598`, dirty=false)
+
+- **Operating point:** `crc-frame` + NMS τ = 0.3, target 0.90, λ = 0.2503, m = 0.3043. Calibration `conformal-nms.json`, sha256 `22654997…`, from commit `4626daf`.
+- **Run:** 90 frames and 222 tiles at 0.80 s per tile. 266 boxes kept; all 90 frames flagged, which is expected because every SARD frame contains people.
+- **Per-block frame recall** (descriptive; one block each):
+
+  | Block | Frame recall | Against 0.80 | Against 0.90 | False boxes per tile |
+  |---|---|---|---|---|
+  | 1321–1360 | 0.938 | meets | meets | 0.29 |
+  | 481–520 | 0.703 | **misses** | **misses** | 0.18 |
+  | 281–320 | 0.987 | meets | meets | 0.17 |
+
+  481–520 is shown as it is: tiny people in deep forest shadow (example `gss507`, 3 of 7 found).
+- **Consistency:** kept detections match the Phase 3 cache on 222 of 222 tiles. Raw box counts differed on 5 tiles. Cause: a bug in the check, not the pipeline. The check re-filtered the cache with `> 0.05`, but the cache rounds scores to 4 decimals, so a score just above 0.05 is stored as 0.0500 and was dropped. Against the full cache all 5 match. The filter is removed in `pipeline.py`. `summary.json` from this run still shows `tiles_with_raw_count_mismatch: 5`, explained here.
+- **Sizes:** the annotated images (11 MB) are not committed. `summary.json`, `run.json`, `config.yaml` and `frames/` (360 KB) are committed with `-f`.

@@ -145,9 +145,8 @@ def block_metrics(records):
 def consistency(cache_path, records, op, floor):
     """Kept detections must equal the Phase 3 cache after the same NMS and threshold."""
     cache = defaultdict(list)
-    for d in json.loads(Path(cache_path).read_text()):
-        if d["score"] > floor:
-            cache[d["image_id"]].append(d)
+    for d in json.loads(Path(cache_path).read_text()):  # already floor-filtered; re-filtering on rounded scores drops 0.0500
+        cache[d["image_id"]].append(d)
     tiles = mismatched = raw_mismatched = 0
     for r in records:
         for t in r["tiles"]:
