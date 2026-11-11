@@ -44,3 +44,42 @@ Decisions and their reasons, newest last. Results tables live in `docs/results-*
 - **Final outputs:** generated from commit `38f4aa5` with dirty=false. `crc-frame` thresholds are unchanged from the 0.05-floor run, because all of them were above 0.05. `worst-block` now reaches the 0.90 target at λ = 0.031, but at a cost of 51 false boxes per tile on val (precision 0.03), so it isn't usable operationally. Test isn't scored at that λ ("needs lower-floor run"), because test stays at 0.05 until you approve otherwise.
 - **Phase 4 default:** your rule was `crc-frame` at 0.90 unless the lower floor let `worst-block` reach 0.90. It does reach it, but at 51 false boxes per tile, so my recommendation is to keep `crc-frame` at 0.90 (0.38 false boxes per tile on val). This needs your decision.
 - **NMS:** kept out of the baseline, as instructed. It is proposed as a separate calibrated variant: duplicates are 95 of 211 val false boxes and 109 of 246 test false boxes at the 0.90 target.
+
+## 2026-11-07: Decisions after the Phase 3 checkpoint
+
+- **Phase 4 default:** `crc-frame` at the 0.90 target (λ = 0.250, box margin 0.304). α can be set to give target 0.80 or 0.90.
+- **`worst-block` at 0.90:** reported as unusable on val (λ = 0.031, 51 false boxes per tile, precision 0.03). Unscored on test, because there will be no test run at the 0.01 floor.
+- **Per-block frame recall at λ = 0.250** (`src/block_recall.py`, `results/metrics/block-recall-lambda0.25.json`):
+
+  | Group | Blocks | Lowest | At or above 0.80 | At or above 0.90 |
+  |---|---|---|---|---|
+  | calib + val | 13 | 0.731 (val 801–840) | 11 | 7 |
+  | test | 7 | 0.703 (481–520) | 4 | 3 |
+
+## NMS variant: rules fixed before running
+
+- **Variant:** class-agnostic greedy NMS on each tile's cached detections, before thresholding. Overlap thresholds τ ∈ {0.3, 0.4, 0.5, 0.6, 0.7}.
+  - Lower-scoring boxes never suppress higher ones, so the boxes kept above λ don't depend on the cache floor. Test at its 0.05 floor is therefore valid for any λ ≥ 0.05.
+- **For each τ:** recalibrate λ with `crc-frame` on calib with NMS applied, for targets 0.80 and 0.90, and recalibrate the box margin on the same pairs.
+- **Selecting τ (val only, at the 0.90 target):**
+  - *Eligible* if val frame recall ≥ the no-NMS value − 0.01, **and** val frame recall on frames with 3+ people ≥ the no-NMS value − 0.02.
+  - *Chosen:* the eligible τ with the fewest val false boxes per tile; on a tie, the larger τ.
+  - *The same τ* is used for the 0.80 target.
+- **Pass rule (for plugging into Phase 4):** the chosen τ cuts val false boxes per tile by at least 20% against no NMS at the 0.90 target. If nothing passes, the Phase 4 pipeline runs without NMS.
+- **Test:** scored once with the chosen τ, as confirmation only, from the existing 0.05-floor cache (no re-run).
+
+## NMS variant: outcome (`src/conformal_nms.py`, `docs/results-phase3-nms.md`)
+
+- **All five τ were eligible.** At the 0.90 target, val frame recall moves by at most −0.001 and 3+-people frame recall by at most −0.001.
+- **Chosen τ = 0.3**, which gives the fewest val false boxes per tile: 0.382 → 0.199 (−48%). The pass rule required ≥ 20%, so it **passed**. λ stays 0.250 at the 0.90 target and 0.351 → 0.349 at 0.80; the box margins are unchanged.
+- **Test confirmation, scored once from the existing 0.05-floor cache:**
+
+  | Measure | No NMS | NMS τ = 0.3 |
+  |---|---|---|
+  | False boxes per tile | 0.456 | 0.219 (−52%) |
+  | Precision | 0.672 | 0.808 |
+  | Frame recall | 0.861 | 0.856 |
+  | Frame recall, 3+-people frames | 0.775 | 0.764 |
+
+- **Caveat on the 3+-people check:** it's not very selective on val, where 168 of 177 frames have 3 or more people. Test has 90 of 210 such frames, and there the cost is about one point of recall.
+- **Phase 4:** because the variant passed, it is plugged in, as you instructed. The pipeline default is `crc-frame` at the 0.90 target **with NMS τ = 0.3** (λ and margin from the NMS calibration), labelled as such. A config switch (`nms: null`) gives the no-NMS baseline.
