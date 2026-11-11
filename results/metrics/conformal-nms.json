@@ -1,0 +1,680 @@
+{
+ "git": {
+  "commit": "4626daff8373b17e723246e193a324063ea24514",
+  "branch": "phase4-poc",
+  "dirty": false
+ },
+ "taus": [
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  0.7
+ ],
+ "crowded_min_people": 3,
+ "sweep_val": {
+  "none": {
+   "0.80": {
+    "lambda": 0.3511,
+    "box_margin": 0.2366,
+    "frame_recall": 0.7871536185095507,
+    "recall": 0.7825581395348837,
+    "precision": 0.9352112676056338,
+    "fp_per_tile": 0.08318264014466546,
+    "box_coverage": 0.9322289156626506,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.781703514739229,
+     "recall": 0.7802850356294537
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   },
+   "0.90": {
+    "lambda": 0.2503,
+    "box_margin": 0.3043,
+    "frame_recall": 0.8753362927091741,
+    "recall": 0.8686046511627907,
+    "precision": 0.7776606954689147,
+    "fp_per_tile": 0.38155515370705245,
+    "box_coverage": 0.9539295392953929,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.868657879818594,
+     "recall": 0.8657957244655582
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   }
+  },
+  "0.3": {
+   "0.80": {
+    "lambda": 0.3493,
+    "box_margin": 0.2366,
+    "frame_recall": 0.7880952380952382,
+    "recall": 0.7837209302325582,
+    "precision": 0.9513590844062947,
+    "fp_per_tile": 0.06148282097649186,
+    "box_coverage": 0.9323308270676691,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.7826955782312924,
+     "recall": 0.7814726840855107
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   },
+   "0.90": {
+    "lambda": 0.2503,
+    "box_margin": 0.3043,
+    "frame_recall": 0.8743946731234866,
+    "recall": 0.8674418604651163,
+    "precision": 0.8701298701298701,
+    "fp_per_tile": 0.19891500904159132,
+    "box_coverage": 0.9538670284938942,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.8676658163265304,
+     "recall": 0.8646080760095012
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   }
+  },
+  "0.4": {
+   "0.80": {
+    "lambda": 0.3493,
+    "box_margin": 0.2366,
+    "frame_recall": 0.7880952380952382,
+    "recall": 0.7837209302325582,
+    "precision": 0.9513590844062947,
+    "fp_per_tile": 0.06148282097649186,
+    "box_coverage": 0.9323308270676691,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.7826955782312924,
+     "recall": 0.7814726840855107
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   },
+   "0.90": {
+    "lambda": 0.2503,
+    "box_margin": 0.3043,
+    "frame_recall": 0.8743946731234866,
+    "recall": 0.8674418604651163,
+    "precision": 0.8650234741784038,
+    "fp_per_tile": 0.20795660036166366,
+    "box_coverage": 0.9538670284938942,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.8676658163265304,
+     "recall": 0.8646080760095012
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   }
+  },
+  "0.5": {
+   "0.80": {
+    "lambda": 0.3511,
+    "box_margin": 0.2366,
+    "frame_recall": 0.7871536185095507,
+    "recall": 0.7825581395348837,
+    "precision": 0.9512893982808023,
+    "fp_per_tile": 0.06148282097649186,
+    "box_coverage": 0.9322289156626506,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.781703514739229,
+     "recall": 0.7802850356294537
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   },
+   "0.90": {
+    "lambda": 0.2503,
+    "box_margin": 0.3043,
+    "frame_recall": 0.8743946731234866,
+    "recall": 0.8674418604651163,
+    "precision": 0.8481012658227848,
+    "fp_per_tile": 0.23869801084990958,
+    "box_coverage": 0.9538670284938942,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.8676658163265304,
+     "recall": 0.8646080760095012
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   }
+  },
+  "0.6": {
+   "0.80": {
+    "lambda": 0.3511,
+    "box_margin": 0.2366,
+    "frame_recall": 0.7871536185095507,
+    "recall": 0.7825581395348837,
+    "precision": 0.9485714285714286,
+    "fp_per_tile": 0.0650994575045208,
+    "box_coverage": 0.9322289156626506,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.781703514739229,
+     "recall": 0.7802850356294537
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   },
+   "0.90": {
+    "lambda": 0.2503,
+    "box_margin": 0.3043,
+    "frame_recall": 0.8753362927091741,
+    "recall": 0.8686046511627907,
+    "precision": 0.8245810055865922,
+    "fp_per_tile": 0.28390596745027125,
+    "box_coverage": 0.9539295392953929,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.868657879818594,
+     "recall": 0.8657957244655582
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   }
+  },
+  "0.7": {
+   "0.80": {
+    "lambda": 0.3511,
+    "box_margin": 0.2366,
+    "frame_recall": 0.7871536185095507,
+    "recall": 0.7825581395348837,
+    "precision": 0.9431818181818182,
+    "fp_per_tile": 0.07233273056057866,
+    "box_coverage": 0.9322289156626506,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.781703514739229,
+     "recall": 0.7802850356294537
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   },
+   "0.90": {
+    "lambda": 0.2503,
+    "box_margin": 0.3043,
+    "frame_recall": 0.8753362927091741,
+    "recall": 0.8686046511627907,
+    "precision": 0.7978378378378378,
+    "fp_per_tile": 0.33815551537070526,
+    "box_coverage": 0.9539295392953929,
+    "crowded": {
+     "frames": 168,
+     "people": 842,
+     "frame_recall": 0.868657879818594,
+     "recall": 0.8657957244655582
+    },
+    "counts": {
+     "people": 860,
+     "frames": 177,
+     "tiles": 553,
+     "blocks": 6
+    }
+   }
+  }
+ },
+ "eligible": [
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  0.7
+ ],
+ "chosen_tau": 0.3,
+ "passed": true,
+ "confirm": {
+  "0.80": {
+   "none": {
+    "val": {
+     "lambda": 0.3511,
+     "box_margin": 0.2366,
+     "frame_recall": 0.7871536185095507,
+     "recall": 0.7825581395348837,
+     "precision": 0.9352112676056338,
+     "fp_per_tile": 0.08318264014466546,
+     "box_coverage": 0.9322289156626506,
+     "crowded": {
+      "frames": 168,
+      "people": 842,
+      "frame_recall": 0.781703514739229,
+      "recall": 0.7802850356294537
+     },
+     "counts": {
+      "people": 860,
+      "frames": 177,
+      "tiles": 553,
+      "blocks": 6
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.6958,
+       0.8714
+      ],
+      "iou30.frame_recall": [
+       0.6995,
+       0.8751
+      ],
+      "iou30.precision": [
+       0.8872,
+       0.9686
+      ],
+      "iou30.fp_per_tile": [
+       0.0389,
+       0.1284
+      ],
+      "box.coverage": [
+       0.8968,
+       0.9601
+      ],
+      "box.fp_per_tile_extra": [
+       0.0109,
+       0.0604
+      ]
+     }
+    },
+    "test": {
+     "lambda": 0.3511,
+     "box_margin": 0.2366,
+     "frame_recall": 0.7370634920634921,
+     "recall": 0.7043618739903069,
+     "precision": 0.8809034907597536,
+     "fp_per_tile": 0.10760667903525047,
+     "box_coverage": 0.8881118881118881,
+     "crowded": {
+      "frames": 90,
+      "people": 417,
+      "frame_recall": 0.6475925925925926,
+      "recall": 0.6594724220623501
+     },
+     "counts": {
+      "people": 619,
+      "frames": 210,
+      "tiles": 539,
+      "blocks": 7
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.5973,
+       0.8182
+      ],
+      "iou30.frame_recall": [
+       0.6474,
+       0.8258
+      ],
+      "iou30.precision": [
+       0.8301,
+       0.9367
+      ],
+      "iou30.fp_per_tile": [
+       0.0549,
+       0.1688
+      ],
+      "box.coverage": [
+       0.8558,
+       0.9206
+      ],
+      "box.fp_per_tile_extra": [
+       0.0087,
+       0.0288
+      ]
+     }
+    }
+   },
+   "nms0.3": {
+    "val": {
+     "lambda": 0.3493,
+     "box_margin": 0.2366,
+     "frame_recall": 0.7880952380952382,
+     "recall": 0.7837209302325582,
+     "precision": 0.9513590844062947,
+     "fp_per_tile": 0.06148282097649186,
+     "box_coverage": 0.9323308270676691,
+     "crowded": {
+      "frames": 168,
+      "people": 842,
+      "frame_recall": 0.7826955782312924,
+      "recall": 0.7814726840855107
+     },
+     "counts": {
+      "people": 860,
+      "frames": 177,
+      "tiles": 553,
+      "blocks": 6
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.6954,
+       0.8711
+      ],
+      "iou30.frame_recall": [
+       0.697,
+       0.8748
+      ],
+      "iou30.precision": [
+       0.8976,
+       0.9899
+      ],
+      "iou30.fp_per_tile": [
+       0.0129,
+       0.1156
+      ],
+      "box.coverage": [
+       0.8962,
+       0.9601
+      ],
+      "box.fp_per_tile_extra": [
+       0.0109,
+       0.0616
+      ]
+     }
+    },
+    "test": {
+     "lambda": 0.3493,
+     "box_margin": 0.2366,
+     "frame_recall": 0.7387641723356009,
+     "recall": 0.7011308562197092,
+     "precision": 0.9096774193548387,
+     "fp_per_tile": 0.07792207792207792,
+     "box_coverage": 0.8817966903073287,
+     "crowded": {
+      "frames": 90,
+      "people": 417,
+      "frame_recall": 0.6404497354497355,
+      "recall": 0.6498800959232613
+     },
+     "counts": {
+      "people": 619,
+      "frames": 210,
+      "tiles": 539,
+      "blocks": 7
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.5959,
+       0.8155
+      ],
+      "iou30.frame_recall": [
+       0.6445,
+       0.8367
+      ],
+      "iou30.precision": [
+       0.8752,
+       0.943
+      ],
+      "iou30.fp_per_tile": [
+       0.0477,
+       0.1121
+      ],
+      "box.coverage": [
+       0.8481,
+       0.9141
+      ],
+      "box.fp_per_tile_extra": [
+       0.0088,
+       0.0285
+      ]
+     }
+    }
+   }
+  },
+  "0.90": {
+   "none": {
+    "val": {
+     "lambda": 0.2503,
+     "box_margin": 0.3043,
+     "frame_recall": 0.8753362927091741,
+     "recall": 0.8686046511627907,
+     "precision": 0.7776606954689147,
+     "fp_per_tile": 0.38155515370705245,
+     "box_coverage": 0.9539295392953929,
+     "crowded": {
+      "frames": 168,
+      "people": 842,
+      "frame_recall": 0.868657879818594,
+      "recall": 0.8657957244655582
+     },
+     "counts": {
+      "people": 860,
+      "frames": 177,
+      "tiles": 553,
+      "blocks": 6
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.7875,
+       0.9373
+      ],
+      "iou30.frame_recall": [
+       0.8012,
+       0.9404
+      ],
+      "iou30.precision": [
+       0.741,
+       0.8121
+      ],
+      "iou30.fp_per_tile": [
+       0.2955,
+       0.4612
+      ],
+      "box.coverage": [
+       0.9303,
+       0.9758
+      ],
+      "box.fp_per_tile_extra": [
+       0.0261,
+       0.1639
+      ]
+     }
+    },
+    "test": {
+     "lambda": 0.2503,
+     "box_margin": 0.3043,
+     "frame_recall": 0.8606859410430839,
+     "recall": 0.8222940226171244,
+     "precision": 0.6724367509986684,
+     "fp_per_tile": 0.45640074211502785,
+     "box_coverage": 0.906930693069307,
+     "crowded": {
+      "frames": 90,
+      "people": 417,
+      "frame_recall": 0.7749338624338624,
+      "recall": 0.7793764988009593
+     },
+     "counts": {
+      "people": 619,
+      "frames": 210,
+      "tiles": 539,
+      "blocks": 7
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.7345,
+       0.9172
+      ],
+      "iou30.frame_recall": [
+       0.7834,
+       0.9389
+      ],
+      "iou30.precision": [
+       0.6147,
+       0.7271
+      ],
+      "iou30.fp_per_tile": [
+       0.3485,
+       0.5733
+      ],
+      "box.coverage": [
+       0.8885,
+       0.9262
+      ],
+      "box.fp_per_tile_extra": [
+       0.0376,
+       0.0704
+      ]
+     }
+    }
+   },
+   "nms0.3": {
+    "val": {
+     "lambda": 0.2503,
+     "box_margin": 0.3043,
+     "frame_recall": 0.8743946731234866,
+     "recall": 0.8674418604651163,
+     "precision": 0.8701298701298701,
+     "fp_per_tile": 0.19891500904159132,
+     "box_coverage": 0.9538670284938942,
+     "crowded": {
+      "frames": 168,
+      "people": 842,
+      "frame_recall": 0.8676658163265304,
+      "recall": 0.8646080760095012
+     },
+     "counts": {
+      "people": 860,
+      "frames": 177,
+      "tiles": 553,
+      "blocks": 6
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.7911,
+       0.9355
+      ],
+      "iou30.frame_recall": [
+       0.8028,
+       0.9394
+      ],
+      "iou30.precision": [
+       0.8226,
+       0.9319
+      ],
+      "iou30.fp_per_tile": [
+       0.0948,
+       0.2756
+      ],
+      "box.coverage": [
+       0.93,
+       0.9761
+      ],
+      "box.fp_per_tile_extra": [
+       0.0442,
+       0.1782
+      ]
+     }
+    },
+    "test": {
+     "lambda": 0.2503,
+     "box_margin": 0.3043,
+     "frame_recall": 0.8559920634920635,
+     "recall": 0.81421647819063,
+     "precision": 0.8075040783034257,
+     "fp_per_tile": 0.2189239332096475,
+     "box_coverage": 0.907070707070707,
+     "crowded": {
+      "frames": 90,
+      "people": 417,
+      "frame_recall": 0.7639814814814816,
+      "recall": 0.7673860911270983
+     },
+     "counts": {
+      "people": 619,
+      "frames": 210,
+      "tiles": 539,
+      "blocks": 7
+     },
+     "ranges": {
+      "iou30.recall": [
+       0.7305,
+       0.9058
+      ],
+      "iou30.frame_recall": [
+       0.7815,
+       0.9316
+      ],
+      "iou30.precision": [
+       0.7331,
+       0.8709
+      ],
+      "iou30.fp_per_tile": [
+       0.1477,
+       0.3028
+      ],
+      "box.coverage": [
+       0.8899,
+       0.9262
+      ],
+      "box.fp_per_tile_extra": [
+       0.0405,
+       0.0884
+      ]
+     }
+    }
+   }
+  }
+ }
+}
