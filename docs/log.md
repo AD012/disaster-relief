@@ -83,3 +83,24 @@ Decisions and their reasons, newest last. Results tables live in `docs/results-*
 
 - **Caveat on the 3+-people check:** it's not very selective on val, where 168 of 177 frames have 3 or more people. Test has 90 of 210 such frames, and there the cost is about one point of recall.
 - **Phase 4:** because the variant passed, it is plugged in, as you instructed. The pipeline default is `crc-frame` at the 0.90 target **with NMS τ = 0.3** (λ and margin from the NMS calibration), labelled as such. A config switch (`nms: null`) gives the no-NMS baseline.
+
+## 2026-11-10: Phase 4, proof-of-concept pipeline (branch `phase4-poc`)
+
+- **Regenerated from clean commit `4626daf`:** NMS variant and block recall, with identical numbers.
+- **`src/detector.py`:** wraps `baseline.detect` with the frozen settings, so its output is identical to the cached runs.
+  - Optional `adapter`: a PEFT directory, or a state dict loaded with `strict=False`.
+  - State-dict path tested: 40 head tensors saved and reloaded gave identical detections, with 0 unexpected keys. The PEFT path is untested until real LoRA weights exist.
+- **`src/pipeline.py` + `configs/poc.yaml`:**
+  - Each frame goes through: detect per tile → NMS (if set) → keep score ≥ λ → inflate by margin m → flag the frame if anything is kept.
+  - λ and m are read from the calibration file for the configured method, target and NMS setting. The pipeline refuses an NMS τ that isn't the passed, chosen variant.
+  - The summary records the operating point: method, λ, τ, margin, the calibration file's SHA-256 and its git commit, plus the run's own commit.
+- **Default:** `crc-frame` + NMS τ = 0.3 at the 0.90 target (λ = 0.2503, m = 0.3043). Alternatives: `nms: null` for the plain baseline; target 0.80.
+- **Replay blocks (all test, explicitly requested):**
+  - 1321–1360: tall grass, the main source of false boxes.
+  - 481–520: forest shadow, the weakest test block at 0.703.
+  - 281–320: easy (0.987 at λ = 0.25 without NMS).
+  - Running inference on these blocks is a re-run on test, approved by your instruction to replay them. Nothing is tuned on it.
+- **Labels are used only for reporting:** per-block frame and pooled recall against 0.80 and 0.90, and false boxes per tile. The pipeline's own annotated images carry no labels; `src/poc_examples.py` draws a labelled sheet for the report.
+- **Consistency test:** kept detections must equal the Phase 3 test cache after the same NMS and threshold (scores within 1e-4, boxes within 0.02 px). It passed on an 11-tile development run.
+- **Near-duplicate frame skipping:** not implemented (optional). Recorded in `summary.json`.
+- **Split buffers:** frames at block edges were dropped from the splits, so a "40-frame block" replays fewer frames.
