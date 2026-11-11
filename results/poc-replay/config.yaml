@@ -1,0 +1,23 @@
+run_name: poc-replay
+detector:
+  model: IDEA-Research/grounding-dino-tiny
+  prompt: person.
+  scale: 1.0
+  floor: 0.05
+  adapter: null
+operating_point:
+  method: crc-frame
+  target: 0.9
+  nms: 0.3
+  calibration_nms: results/metrics/conformal-nms.json
+  calibration_plain: results/metrics/conformal-baseline.json
+input:
+  manifest: data/manifests/sard/test.json
+  data_root: data/raw/sard-roboflow-tiles
+  blocks:
+  - 1321-1360
+  - 481-520
+  - 281-320
+  folder: null
+consistency_cache: results/baseline-test/cache/person_s1.json
+save_annotated: true

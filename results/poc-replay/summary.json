@@ -1,0 +1,79 @@
+{
+ "operating_point": {
+  "method": "crc-frame + NMS tau=0.3",
+  "target": 0.9,
+  "alpha": 0.1,
+  "nms_tau": 0.3,
+  "lambda": 0.2503,
+  "box_margin": 0.3043,
+  "calibration_file": "results/metrics/conformal-nms.json",
+  "calibration_sha256": "2265499707323ae4a11def449750fe5b53681a538415e1971570cd41eaf0fff3",
+  "calibration_git": {
+   "commit": "4626daff8373b17e723246e193a324063ea24514",
+   "branch": "phase4-poc",
+   "dirty": false
+  }
+ },
+ "git": {
+  "commit": "b3bea64b4ffd84c3b0691feb4327020140d431b4",
+  "branch": "phase4-poc",
+  "dirty": false
+ },
+ "adapter": null,
+ "frames": 90,
+ "tiles": 222,
+ "detections_kept": 266,
+ "seconds_per_tile_detector": 0.833,
+ "seconds_per_tile_total": 0.841,
+ "near_duplicate_skipping": "not implemented (optional; skipped)",
+ "per_block": {
+  "1321-1360": {
+   "split": "test",
+   "held_out": true,
+   "frames": 35,
+   "people": 87,
+   "frame_recall": 0.9381,
+   "recall": 0.931,
+   "fp_per_tile": 0.2857,
+   "meets_0.80": true,
+   "meets_0.90": true,
+   "note": "test block: repeat look at test with a frozen operating point (nothing tuned)"
+  },
+  "481-520": {
+   "split": "test",
+   "held_out": true,
+   "frames": 30,
+   "people": 136,
+   "frame_recall": 0.7033,
+   "recall": 0.6618,
+   "fp_per_tile": 0.1753,
+   "meets_0.80": false,
+   "meets_0.90": false,
+   "note": "test block: repeat look at test with a frozen operating point (nothing tuned)"
+  },
+  "281-320": {
+   "split": "test",
+   "held_out": true,
+   "frames": 25,
+   "people": 51,
+   "frame_recall": 0.9867,
+   "recall": 0.9804,
+   "fp_per_tile": 0.1707,
+   "meets_0.80": true,
+   "meets_0.90": true,
+   "note": "test block: repeat look at test with a frozen operating point (nothing tuned)"
+  }
+ },
+ "consistency": {
+  "cache": "results/baseline-test/cache/person_s1.json",
+  "tiles_checked": 222,
+  "tiles_with_kept_mismatch": 0,
+  "tiles_with_raw_count_mismatch": 0,
+  "passed": true
+ },
+ "flagged_frames": {
+  "count": 90,
+  "of_frames": 90,
+  "note": "uninformative on SARD: every SARD frame contains people, so every frame should be flagged"
+ }
+}

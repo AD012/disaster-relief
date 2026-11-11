@@ -1,0 +1,1 @@
+{"frame": "gss295", "block": "281-320", "flagged": true, "n_tiles": 1, "tiles": [{"file": "data/raw/sard-roboflow-tiles/train/images/gss295_jpg.rf.703a139b979d48bd4a19d8282bb07163.jpg", "image_id": 111, "n_raw": 3, "detections": [{"bbox": [257.75, 239.35, 56.89, 140.98], "score": 0.8728, "inflated_bbox": [240.44, 196.45, 91.51, 226.78]}]}], "found": 1, "people": 1, "fp": 0}

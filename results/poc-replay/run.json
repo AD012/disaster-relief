@@ -1,0 +1,27 @@
+{
+ "started": "2026-11-11T01:47:27+00:00",
+ "git": {
+  "commit": "b3bea64b4ffd84c3b0691feb4327020140d431b4",
+  "branch": "phase4-poc",
+  "dirty": false
+ },
+ "device": "mps",
+ "python": "3.11.18",
+ "torch": "2.15.0",
+ "transformers": "5.22.1",
+ "operating_point": {
+  "method": "crc-frame + NMS tau=0.3",
+  "target": 0.9,
+  "alpha": 0.1,
+  "nms_tau": 0.3,
+  "lambda": 0.2503,
+  "box_margin": 0.3043,
+  "calibration_file": "results/metrics/conformal-nms.json",
+  "calibration_sha256": "2265499707323ae4a11def449750fe5b53681a538415e1971570cd41eaf0fff3",
+  "calibration_git": {
+   "commit": "4626daff8373b17e723246e193a324063ea24514",
+   "branch": "phase4-poc",
+   "dirty": false
+  }
+ }
+}
