@@ -183,3 +183,28 @@ Decisions and their reasons, newest last. Results tables live in `docs/results-*
     - LoRA: 0.9302 at epoch 0 and 0.9306 at epoch 1. The gain is below `min_delta`, so epoch 1 is not "best".
   - All outputs landed in `$DR_ROOT/runs/`; nothing new was written inside the repo.
   - With the default `DR_ROOT` on the Mac (`~/Documents/Code`, no `data/`), `train.py` stops with the clear message.
+
+## 2026-11-24: HPC smoke test data check failed; data layout pinned down (Mac side only)
+
+- **Cluster failure:** "train 3676 tiles, 3676 missing under $DR_ROOT/data/raw/sard-roboflow-tiles". The datasets had been copied to `$DR_ROOT/data/{heridal,sard-roboflow-tiles,visdrone}`, without the `raw/` level. The cluster layout is being fixed by hand; the code is unchanged.
+- **The path rule is correct and the same everywhere:** `$DR_ROOT / data_root (config) / file_name (manifest)`, through `under_root()`. `train.py`, `tests/test_adapter.py` and `slurm/smoke.sbatch` all use it.
+- **Required tree** (from the manifests' `file_name` values):
+  - **Required for training:** `data/raw/sard-roboflow-tiles/{train,valid,test}/images/`. All three folders are needed even for training, because the frozen splits mix Roboflow's folders.
+  - **Optional:**
+    - `data/raw/heridal/images/test/`
+    - `data/raw/visdrone/unzipped/VisDrone2019-DET-val/images/`
+    - `data/processed/{heridal,visdrone}/tiles300/`
+- **New `tests/check_data.py`** (stdlib only, 0.2 s):
+  - Reports tiles and missing counts for all 11 image manifests, plus the first 3 missing paths.
+  - Exits 1 if SARD train or val is incomplete.
+  - On the Mac with `DR_ROOT` set to the repo: all 11 manifests report 0 missing.
+  - With the default `DR_ROOT` (`~/Documents/Code`): everything missing, exit 1. This is expected; the Mac data lives inside the repo.
+- **`docs/HPC.md`:**
+  - Data layout section (tree, levels a copy can flatten, rsync commands that keep `raw/`).
+  - Environment section: prefix env `$DR_ROOT/env`, `torch 2.6.0+cu124` installed with pip, and the activation lines.
+  - Pre-submit checklist, which now includes `check_data.py`.
+  - The named env "disaster" is removed from the HPC docs. The README's `conda activate disaster` is the Mac env and stays.
+- **Inconsistencies noted, not changed:**
+  - Commit `8935cdd` is titled "bs2 x accum4", but the configs still say batch 4 and accum 1, and `train.sbatch` passes no `--set`.
+  - The `--gres` comments still say "fall back to 3090", but the line itself already requests the 3090.
+  - Phase 2–4 scripts (`baseline.py`, `pipeline.py`, `show_examples.py`, `floor_misses.py`) resolve `data_root` against the working directory, not `DR_ROOT`. Training is not affected.

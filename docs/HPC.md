@@ -7,12 +7,12 @@ Placeholders in the `.sbatch` files are marked `TODO-HPC`; each maps to an open 
 
 - **Clusters:** UT Dallas **Ganymede2** and **Juno**.
 - **Scheduler:** Slurm.
-- **Python:** Miniconda through `module load miniconda/4.12.0`. No Docker.
+- **Python:** Miniconda through `module load miniconda/4.12.0`. No Docker. The env is the conda **prefix** `$DR_ROOT/env`, not a named env (see [Environment](#environment)).
 - **Queues:** preempt queues; jobs can be killed and requeued. `src/train.py --resume auto` and `slurm/train.sbatch` (`--requeue`, signal forwarding, exit code 75 → `scontrol requeue`) handle this.
 - **Access:** campus network or UTD VPN required.
 - **Partition:** `gpu-preempt`, with `--requeue`.
-- **GPU request:** `--gres=gpu:nvidia_a100-sxm4-80gb:1`.
-  - Fallback: `--gres=gpu:nvidia_geforce_rtx_3090:1` (24 GB). It is marked TODO-HPC in the `.sbatch` files and may need `--set train.batch_size=2 --set train.grad_accum=2`.
+- **GPU request:** the `.sbatch` files currently request `--gres=gpu:nvidia_geforce_rtx_3090:1` (24 GB). `--gres=gpu:nvidia_a100-sxm4-80gb:1` is the alternative.
+  - The 3090 may need a smaller batch (`--set train.batch_size=2 --set train.grad_accum=…`); the configs still say batch 4, accum 1.
 - **Project root:** `DR_ROOT=/mfs/io/groups/zare/Xander/disaster-relief`. Checkpoints and logs go under `runs/` and `logs/` there, **never under scratch**.
 
 ## Paths (`DR_ROOT`)
@@ -24,7 +24,8 @@ No absolute paths in code or configs. Everything that is not versioned resolves 
 ```
 $DR_ROOT/
   repo/       this git checkout (manifests, configs and results/metrics resolve here)
-  data/       raw/sard-roboflow-tiles/  (config data_root: data/raw/sard-roboflow-tiles)
+  data/       raw/<dataset>/ and processed/<dataset>/ (exact tree: Data layout below)
+  env/        conda prefix env (Python 3.11, torch 2.6.0+cu124, pip)
   hf_cache/   HF_HOME (train.py uses it automatically if the folder exists)
   runs/       <run>/: checkpoints/, export/, log.csv, run.json, config.yaml
   logs/       Slurm stdout/stderr (<job-name>-<jobid>.out)
@@ -33,6 +34,76 @@ $DR_ROOT/
 - **Same configs on the Mac and the HPC:** relative paths mean `run.json` records the resolved paths (`paths`), and the config hash doesn't change between machines.
 - **Mac:** the repo's parent is `~/Documents/Code`, which has no `data/`. Either `export DR_ROOT=~/Documents/Code/disaster-relief` (data/ and a git-ignored runs/ inside the repo), or create a dedicated root with the layout above. `train.py` stops with a clear message if `data_root` is not found.
 - **Symlinked repo:** set `DR_ROOT` explicitly. Python sees the physical path, so the default would be the link target's parent.
+
+## Data layout
+
+Image path = `$DR_ROOT / <data_root from the config> / <file_name from the manifest>`.
+- `data_root` comes from the configs: `data/raw/sard-roboflow-tiles`, `data/processed/{heridal,visdrone}`.
+- `file_name` comes from the manifests in the repo.
+- Same rule in `src/train.py`, `tests/test_adapter.py`, `slurm/smoke.sbatch` and `tests/check_data.py`, all through `under_root()` in `src/utils.py`.
+- Every manifest needs exactly this tree under `$DR_ROOT/data/`. Folders were listed from the manifests' `file_name` values with `python tests/check_data.py -v`.
+
+```
+$DR_ROOT/data/
+  raw/                                   <- keep this level
+    sard-roboflow-tiles/                 REQUIRED for training (~654 MB)
+      train/images/                      all three are needed even for training: the frozen
+      valid/images/                      splits mix Roboflow's folders (sard/train.json starts
+      test/images/                       in valid/images, sard/val.json in train/images)
+    heridal/images/test/                 optional: heridal/full_test.json (~771 MB incl. heridal.ndjson)
+    visdrone/unzipped/VisDrone2019-DET-val/images/   optional: visdrone/full_val.json (~159 MB incl. the .zip)
+  processed/                             optional: zero-shot tile sets
+    heridal/tiles300/                    heridal/tiles300.json   (configs/zeroshot_heridal.yaml)
+    visdrone/tiles300/                   visdrone/tiles300.json  (configs/zeroshot_visdrone.yaml)
+```
+
+**Levels a copy can easily flatten** (each breaks every path below it):
+- `raw/` itself. Copying `data/raw/*` into `data/` gives `data/sard-roboflow-tiles`, the layout that failed the first smoke test with 3676 of 3676 train tiles missing.
+- `images/` inside each Roboflow split (`train/images/…`, not `train/…`).
+- The `train/`, `valid/` and `test/` split folders. Merging them into one folder breaks the manifests, which keep the Roboflow folder in `file_name`.
+- `unzipped/VisDrone2019-DET-val/images/`, which is three levels deep, and `heridal/images/test/`.
+- `processed/`, which sits beside `raw/`, not inside it.
+
+**Copy from the Mac** (trailing slashes matter: copy the *contents* of `raw/` into `raw/`):
+
+```
+rsync -avP --exclude .DS_Store ~/Documents/Code/disaster-relief/data/raw/ <user>@<login-host>:/mfs/io/groups/zare/Xander/disaster-relief/data/raw/
+# optional, zero-shot tile sets only:
+rsync -avP --exclude .DS_Store ~/Documents/Code/disaster-relief/data/processed/ <user>@<login-host>:/mfs/io/groups/zare/Xander/disaster-relief/data/processed/
+```
+
+Check on the login node: `python tests/check_data.py` (stdlib only, seconds; `-v` also shows the rule, first image and folders for each manifest).
+- It prints tiles and missing counts per manifest, plus the first 3 missing paths.
+- It exits 1 if SARD train or val is incomplete.
+
+## Environment
+
+- **What the env is:** the conda prefix **`$DR_ROOT/env`**, with Python 3.11 and `torch 2.6.0+cu124`, all installed with **pip**. It is not a named env.
+- **Activation in jobs and on login nodes** (as in `slurm/*.sbatch`):
+
+```
+set +u                        # Lmod and conda activate reference unset variables
+module load miniconda/4.12.0
+eval "$(conda shell.bash hook)"
+conda activate "$DR_ROOT/env"
+set -u
+export PYTHONNOUSERSITE=1     # ignore ~/.local site-packages
+export HF_HOME=$DR_ROOT/hf_cache
+export HF_HUB_OFFLINE=1
+```
+
+- **No `module load` after activation.** It can reset paths set by the env.
+- **Run git with `LD_LIBRARY_PATH= git …`** while the env is active. The env's OpenSSL breaks `git-remote-https` (fetch, pull, push).
+- **Submit from `$DR_ROOT/repo`.** The log path `--output=../logs/%x-%j.out` is relative to the submit folder.
+
+## Pre-submit checklist (login node)
+
+1. Env active as above; `python -c "import torch; print(torch.__version__)"` prints `2.6.0+cu124`.
+2. `cd $DR_ROOT/repo` and `LD_LIBRARY_PATH= git status`: clean, on the intended commit.
+3. **`python tests/check_data.py`**: exits 0, with SARD train and val showing 0 missing.
+4. `$DR_ROOT/hf_cache` holds `IDEA-Research/grounding-dino-tiny` (setup step 3).
+5. `$DR_ROOT/runs` and `$DR_ROOT/logs` exist.
+6. `sbatch slurm/smoke.sbatch` (first time), then `sbatch slurm/train.sbatch configs/<config>.yaml`.
 
 ## Unknowns to confirm
 
@@ -47,7 +118,7 @@ Fill in each answer. Nothing below has been guessed.
 3. **CPU RAM and time limits per job** (memory per job; maximum wall time on the preempt partition; grace time before a preempted job is killed) → `--time`, `--mem` (TODO-HPC):
    Answer: ______________________________
 
-4. **Conda and CUDA** (can `conda create` write to home or project space after `module load miniconda/4.12.0`? Which CUDA driver/version, i.e. which PyTorch CUDA wheel?):
+4. **Conda and CUDA:** known: prefix env `$DR_ROOT/env`, `torch 2.6.0+cu124` from pip (see Environment). Still open: driver version on the 3090/A100 nodes (cu124 must be supported).
    Answer: ______________________________
 
 5. **Storage quota** for `/mfs/io/groups/zare/Xander/disaster-relief` (size, file-count limit, backups). Runs and logs live there, not on scratch:
@@ -64,12 +135,16 @@ Fill in each answer. Nothing below has been guessed.
 
 ## Setup on the cluster (once, on a login node)
 
-1. Create the layout: `mkdir -p $DR_ROOT/{data/raw,hf_cache,runs,logs}`, with `DR_ROOT=/mfs/io/groups/zare/Xander/disaster-relief`.
+1. Create the layout: `mkdir -p $DR_ROOT/{data/raw,data/processed,hf_cache,runs,logs}`, with `DR_ROOT=/mfs/io/groups/zare/Xander/disaster-relief`.
    - Copy the repo **including `.git`** to `$DR_ROOT/repo`. This lets `run.json` record the commit and dirty flag; `train.py` refuses a dirty or git-less checkout unless given `--allow-dirty`.
-   - Copy the tiles to `$DR_ROOT/data/raw/sard-roboflow-tiles/`.
-2. `module load miniconda/4.12.0`, then create the `disaster` env (Python 3.11, the CUDA build of PyTorch for the cluster's driver, `transformers==5.22.1`, `peft==0.21.2`, `pycocotools`, `scipy`, `pyyaml`, `pillow`). Versions are recorded per run in `run.json`.
+   - Copy the data with the rsync commands in [Data layout](#data-layout), keeping the `raw/` level. Then run `python tests/check_data.py`.
+2. Create the prefix env: `conda create -p $DR_ROOT/env python=3.11`.
+   - Activate it as in [Environment](#environment).
+   - Then `pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124`.
+   - Then `pip install transformers==5.22.1 peft==0.21.2 pycocotools scipy pyyaml pillow`.
+   - Versions are recorded per run in `run.json`.
 3. Download the model once: `HF_HOME=$DR_ROOT/hf_cache python -c "from transformers import AutoProcessor, GroundingDinoForObjectDetection as G; m='IDEA-Research/grounding-dino-tiny'; AutoProcessor.from_pretrained(m); G.from_pretrained(m)"`.
-4. `cd $DR_ROOT/repo && sbatch slurm/smoke.sbatch`, then check `$DR_ROOT/logs/p5-smoke-<jobid>.out` for `SMOKE PASSED`. The job checks the layout, GPU, versions, that every train and val tile exists, the adapter tests and both dry runs.
+4. Go through the [pre-submit checklist](#pre-submit-checklist-login-node), then `cd $DR_ROOT/repo && sbatch slurm/smoke.sbatch`, then check `$DR_ROOT/logs/p5-smoke-<jobid>.out` for `SMOKE PASSED`. The job checks the layout, GPU, versions, that every train and val tile exists, the adapter tests and both dry runs.
    - Submit from `$DR_ROOT/repo`: `--output=../logs/%x-%j.out` is relative to the submit folder, because `#SBATCH` lines cannot expand env vars.
 
 ## Running
