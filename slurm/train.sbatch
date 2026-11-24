@@ -26,8 +26,12 @@ export HF_HOME=$DR_ROOT/hf_cache                    # model snapshot downloaded 
 export HF_HUB_OFFLINE=1                             # compute nodes are not assumed to reach the internet
 OUT=runs/$(basename "$CONFIG" .yaml)                # -> $DR_ROOT/runs/<config>/ (checkpoints, exports, log.csv, run.json)
 
+set +u   # Lmod and conda activate reference unset variables
 module load miniconda/4.12.0
-source activate disaster || conda activate disaster       # env created once on a login node (docs/HPC.md)
+eval "$(conda shell.bash hook)"
+conda activate "$DR_ROOT/env"
+set -u
+export PYTHONNOUSERSITE=1
 cd "$REPO" || exit 1
 
 echo "job $SLURM_JOB_ID (restart ${SLURM_RESTART_COUNT:-0}) on $(hostname): $CONFIG -> $DR_ROOT/$OUT"

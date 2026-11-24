@@ -20,8 +20,12 @@ export DR_ROOT=${DR_ROOT:-$(cd "$REPO/.." && pwd)}
 export HF_HOME=$DR_ROOT/hf_cache
 export HF_HUB_OFFLINE=1
 
+set +u   # Lmod and conda activate reference unset variables
 module load miniconda/4.12.0
-source activate disaster || conda activate disaster
+eval "$(conda shell.bash hook)"
+conda activate "$DR_ROOT/env"
+set -u
+export PYTHONNOUSERSITE=1
 cd "$REPO"
 
 echo "== host $(hostname), job $SLURM_JOB_ID, DR_ROOT $DR_ROOT"; nvidia-smi
