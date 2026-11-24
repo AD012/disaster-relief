@@ -1,0 +1,56 @@
+# Phase 5: fine-tune Grounding DINO Tiny on SARD train tiles, LoRA on the decoder + head.
+# src/train.py reads only train and val; early stopping and hyperparameter choice use val AP50.
+run_name: p5-lora
+seed: 0
+mode: lora                # head | lora
+
+model: IDEA-Research/grounding-dino-tiny   # or a local snapshot path on the cluster (offline compute nodes)
+prompt: "person."         # frozen Phase 2 prompt and scale
+scale: 1.0
+# Paths: no absolute paths. data_root and output_dir resolve under $DR_ROOT (default: the repo's
+# parent folder; HPC: /mfs/io/groups/zare/Xander/disaster-relief). manifests resolve inside the repo.
+data_root: data/raw/sard-roboflow-tiles   # $DR_ROOT/data/raw/sard-roboflow-tiles
+manifests: data/manifests/sard            # <repo>/data/manifests/sard (frozen splits, in git)
+output_dir: null          # null = $DR_ROOT/runs/<run_name>
+train_subset: null        # null = all 3,676 train tiles
+val_subset: null          # null = all 553 val tiles (early stopping uses the full val split)
+
+# Trained fully. Box MLP (one set of weights shared by all 6 decoder levels and the output)
+# and the text projection (feeds the parameter-free text/image dot-product class head).
+head: [model.decoder.bbox_embed, model.text_projection]
+lora:                     # adapters on the decoder layers (module names matched in full)
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  targets:
+    - 'model\.decoder\.layers\.\d+\.(self_attn|encoder_attn_text)\.(query|key|value|out_proj)'
+    - 'model\.decoder\.layers\.\d+\.encoder_attn\.(value_proj|output_proj)'
+    - 'model\.decoder\.layers\.\d+\.(fc1|fc2)'
+
+# Hungarian-matched DETR terms from transformers, re-weighted here. loss_ce weight 2.0 and
+# bbox/giou 5/2 are the library defaults. Encoder (two-stage) terms off: the released
+# checkpoint's encoder class logits are unscaled (about -140..60) and dominate the sum.
+loss_weights: {loss_ce: 2.0, loss_bbox: 5.0, loss_giou: 2.0, loss_ce_enc: 0.0, loss_bbox_enc: 0.0, loss_giou_enc: 0.0}
+
+train:
+  epochs: 30
+  batch_size: 4
+  grad_accum: 1
+  lr: 1.0e-4              # head parameters
+  lr_lora: 2.0e-4         # LoRA parameters
+  weight_decay: 1.0e-4
+  warmup_steps: 100       # optimizer steps, then cosine decay to 0 over all epochs
+  grad_clip: 0.1
+  hflip: true
+  num_workers: 4
+  cuda_precision: bf16    # fp32 | bf16 | fp16 (CUDA only; MPS and CPU always fp32). fp16 on GPUs without bf16.
+
+early_stopping:           # on val AP50 (COCO, IoU 0.5, ignore regions as in evaluate.py)
+  patience: 5             # epochs without a gain > min_delta
+  min_delta: 0.002
+
+eval:
+  batch_size: 8
+  floor: 0.05             # same score floor and text threshold as the Phase 2 cache
+  text_threshold: 0.05
+  before_training: true   # epoch 0 = untrained model; full val should give the Phase 2 AP50 (0.857)

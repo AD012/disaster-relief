@@ -17,3 +17,7 @@ results/*
 runs/
 wandb/
 smoke_out.jpg
+
+# DR_ROOT folders, if DR_ROOT is set to the repo itself
+logs/
+hf_cache/

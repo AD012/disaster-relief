@@ -134,3 +134,52 @@ Decisions and their reasons, newest last. Results tables live in `docs/results-*
   - Command: `python src/poc_examples.py --note "gss1337=two red boxes sit on dark shapes next to a found person - possibly an unlabelled person (unconfirmed)"`.
 - **Shadow-block misses (481–520):** recovering these people would need a much lower threshold and far more false boxes everywhere (worst-block at 0.90 needs λ = 0.031, which is unusable). This replaces a "can't recover" sentence that appeared only in the checkpoint message, not in this log.
 - **Adapters:** LoRA adapter loading is untested until real weights exist; only head state dicts are tested.
+
+## 2026-11-17: Phase 5 prep, training code and Mac dry run (branch `phase5-hpc`)
+
+- **New files:**
+  - `src/train.py`: head-only or LoRA + head training; reads only train and val.
+  - `configs/p5_head.yaml`, `configs/p5_lora.yaml`.
+  - `tests/test_adapter.py`, `tests/dry_run.sh`.
+  - `slurm/train.sbatch`, `slurm/smoke.sbatch`.
+  - `docs/HPC.md`: updated with the cluster facts; unknowns still marked.
+- **Detector hook (`src/detector.py`):** the LoRA path was broken. PEFT 0.21 calls `get_input_embeddings()`, which transformers 5.22 leaves unimplemented for Grounding DINO. Fixed with `peft_compat()`. A PEFT directory may now also contain `head.pt`.
+- **Decisions forced by the model:**
+  - **Class head:** it has no parameters (a dot product between image and text features), so "head" means the box MLP plus the text projection: 329,476 parameters.
+  - **Tied box MLP:** one set of weights is shared by 6 decoder levels and the output. It is trained as a head parameter, not by PEFT, because PEFT would give each tied copy its own adapter.
+  - **Encoder losses (`*_enc`):** weight 0. The checkpoint's encoder class logits range from about −140 to +62, and `loss_ce_enc` is about 28,000 against about 0.1 for the decoder `loss_ce` on val.
+  - **Frozen modules** stay in eval mode, with no dropout. MPS attention has no dropout kernel.
+- **Adapter tests (`python -m unittest discover -s tests`, 4 tests, all passing):**
+  - Untrained `head.pt` and untrained LoRA directories give identical detections on 2 val tiles.
+  - Controls: perturbing the text projection, or LoRA B, changes the detections.
+- **Dry runs (`bash tests/dry_run.sh <config>`):** 20 train and 20 val tiles, batch 1, 1 epoch, on MPS in fp32.
+  - The runs had `dirty: true` because the code was not yet committed. That is acceptable for a dry run, and no results are taken from them.
+  - **Head:** passed in 6 min 44 s. Epoch 0 val AP50 0.9302 (20-tile subset), epoch 1 0.9302.
+  - **LoRA:** passed in 3 min 26 s. Epoch 0 0.9302, epoch 1 0.9297.
+  - Both checked the preemption flow: simulated preemption, then exit 75; `--resume auto` resumed at step 3 of 20 and finished; a second resume reported "already finished"; the export loaded through `Detector`.
+- **Incident:** the first head dry run, at batch 2, took **7 h 13 min**. That broke the 30-minute rule; it was not intended.
+  - Cause: a training step at batch 2 needs about 12.2 GB on MPS, so the 16 GB Mac swapped (1,781 s per tile).
+  - Fix: the dry run now uses batch 1 (6.9 GB, about 6–11 s per step). Mac runs from now on are wrapped in `timeout`.
+
+## 2026-11-24: Phase 5 paths via `DR_ROOT`, Slurm partition and GPU
+
+- **Path resolution:**
+  - **No absolute paths:** `src/utils.py` gains `dr_root()`, `under_root()` and `in_repo()`. `DR_ROOT` comes from the env var; the default is the repo's parent folder.
+  - **Under `$DR_ROOT`:** `data_root`, `output_dir` (default `$DR_ROOT/runs/<run_name>`) and the HF cache (`$DR_ROOT/hf_cache`, used if it exists).
+  - **Inside the repo:** manifests and `results/metrics` (versioned).
+  - **Logging:** `run.json` records the resolved paths; the config hash is the same on every machine.
+  - **Clear error:** `train.py` exits with a message if `data_root` is missing.
+- **HPC:** `DR_ROOT=/mfs/io/groups/zare/Xander/disaster-relief`, holding `repo/`, `data/`, `hf_cache/`, `runs/` and `logs/`. Checkpoints and logs never go under scratch.
+- **Slurm** (`slurm/*.sbatch`):
+  - `--partition=gpu-preempt`, `--gres=gpu:nvidia_a100-sxm4-80gb:1` (TODO-HPC: fallback `nvidia_geforce_rtx_3090:1`), `--requeue`.
+  - `--output=../logs/%x-%j.out`, so jobs are submitted from `$DR_ROOT/repo`.
+  - `DR_ROOT` is exported from the submit folder's parent.
+  - The smoke job checks the layout and that every train and val tile exists.
+- **Checked on the Mac** with a stand-in root in a temp folder (`repo` and `data` symlinked, real `runs/` and `logs/`, `DR_ROOT` set):
+  - `python -m unittest discover -s tests`: 4 tests OK.
+  - `tests/dry_run.sh`: passed for head (1 min 39 s) and LoRA (1 min 54 s), with preemption exit 75, resume at step 3 of 20, "already finished", and the export loading through `Detector`.
+  - Val AP50 on the 20-tile subset:
+    - Head: 0.9302 at epoch 0 and 0.9302 at epoch 1.
+    - LoRA: 0.9302 at epoch 0 and 0.9306 at epoch 1. The gain is below `min_delta`, so epoch 1 is not "best".
+  - All outputs landed in `$DR_ROOT/runs/`; nothing new was written inside the repo.
+  - With the default `DR_ROOT` on the Mac (`~/Documents/Code`, no `data/`), `train.py` stops with the clear message.
