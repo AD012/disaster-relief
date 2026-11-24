@@ -7,7 +7,7 @@
 # Lines marked TODO-HPC still need a value or a decision (docs/HPC.md).
 #SBATCH --job-name=p5-train
 #SBATCH --partition=gpu-preempt
-#SBATCH --gres=gpu:nvidia_a100-sxm4-80gb:1  # TODO-HPC: fall back to --gres=gpu:nvidia_geforce_rtx_3090:1 (24 GB: may need train.batch_size=2 train.grad_accum=2)
+#SBATCH --gres=gpu:nvidia_geforce_rtx_3090:1  # TODO-HPC: fall back to --gres=gpu:nvidia_geforce_rtx_3090:1 (24 GB: may need train.batch_size=2 train.grad_accum=2)
 #SBATCH --time=TODO-HPC                    # TODO-HPC: wall time within the gpu-preempt limit, e.g. 08:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
