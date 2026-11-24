@@ -4,7 +4,7 @@
 # Expect "SMOKE PASSED" at the end of $DR_ROOT/logs/p5-smoke-<jobid>.out. Lines marked TODO-HPC: see docs/HPC.md.
 #SBATCH --job-name=p5-smoke
 #SBATCH --partition=gpu-preempt
-#SBATCH --gres=gpu:nvidia_geforce_rtx_3090:1  # TODO-HPC: fall back to --gres=gpu:nvidia_geforce_rtx_3090:1
+#SBATCH --gres=gpu:nvidia_geforce_rtx_3090:1
 #SBATCH --time=0-00:30:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
