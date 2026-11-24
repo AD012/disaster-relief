@@ -5,7 +5,7 @@
 #SBATCH --job-name=p5-smoke
 #SBATCH --partition=gpu-preempt
 #SBATCH --gres=gpu:nvidia_geforce_rtx_3090:1  # TODO-HPC: fall back to --gres=gpu:nvidia_geforce_rtx_3090:1
-#SBATCH --time=TODO-HPC                    # TODO-HPC: e.g. 00:45:00
+#SBATCH --time=0-00:30:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4

@@ -8,7 +8,7 @@
 #SBATCH --job-name=p5-train
 #SBATCH --partition=gpu-preempt
 #SBATCH --gres=gpu:nvidia_geforce_rtx_3090:1  # TODO-HPC: fall back to --gres=gpu:nvidia_geforce_rtx_3090:1 (24 GB: may need train.batch_size=2 train.grad_accum=2)
-#SBATCH --time=TODO-HPC                    # TODO-HPC: wall time within the gpu-preempt limit, e.g. 08:00:00
+#SBATCH --time=0-08:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4                  # matches train.num_workers in the configs
